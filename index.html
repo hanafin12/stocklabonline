@@ -725,6 +725,8 @@
     padding: 10px 12px;
   }
 
+  .round-badge { display: inline-block; margin-bottom: 12px; }
+
   .utang-badge {
     font-family: var(--font-mono);
     font-size: 0.72rem;
@@ -1065,6 +1067,7 @@
 <!-- ============ KARTU AKSI TERBUKA (PUBLIK) ============ -->
 <section id="screen-aksi-open" class="screen">
   <div class="aksi-wrap">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow">KARTU AKSI DIBUKA</p>
     <h2 class="board-title" style="margin-bottom:8px;">Kartu tersedia untuk ronde ini</h2>
     <p class="aksi-panel-sub" id="aksi-open-sub">Semua pemain boleh melihat kartu ini. Kartu akan diambil bergiliran pada Fase Aksi, setelah urutan jalan ditentukan lewat Fase Bidding.</p>
@@ -1076,6 +1079,7 @@
 <!-- ============ BIDDING: INPUT TAWARAN (per pemain, gantian) ============ -->
 <section id="screen-bidenter" class="screen">
   <div class="pass-card">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow" id="bid-eyebrow">FASE BIDDING · GILIRAN 1 DARI 4</p>
     <h2 class="pass-name" id="bid-name">Pemain 1</h2>
     <p class="pass-instruction">Oper perangkat ke pemain ini. Masukkan tawaran secara rahasia untuk memperebutkan Kartu Urutan, lalu kunci sebelum mengoper ke pemain berikutnya.</p>
@@ -1089,6 +1093,7 @@
 <!-- ============ OPER PERANGKAT — sebelum tiap giliran input Bidding ============ -->
 <section id="screen-bid-pass" class="screen">
   <div class="pass-card">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow" id="bidpass-eyebrow">FASE BIDDING · GILIRAN 1 DARI 4</p>
     <h2 class="pass-name" id="bidpass-name">Pemain 1</h2>
     <p class="pass-instruction">Oper perangkat ke pemain ini. Pastikan pemain lain tidak melihat layar sebelum menekan tombol di bawah.</p>
@@ -1116,6 +1121,7 @@
     <div class="aksi-header">
       <div>
         <span class="aksi-turn-badge">FASE AKSI · GILIRAN</span>
+        <span class="batch-tag round-badge" style="margin-left:8px;">RONDE 1 DARI 6</span>
         <div class="aksi-turn-name" id="aksi-turn-name">Pemain 1</div>
         <div class="final-breakdown" id="aksi-turn-coins" style="margin-top:6px;"></div>
         <div class="final-breakdown" id="aksi-turn-holdings" style="margin-top:2px;"></div>
@@ -1139,6 +1145,7 @@
 <!-- ============ OPER PERANGKAT — sebelum tiap giliran Fase Aksi ============ -->
 <section id="screen-aksi-pass" class="screen">
   <div class="pass-card">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow" id="aksipass-eyebrow">FASE AKSI · GILIRAN 1 DARI 4</p>
     <h2 class="pass-name" id="aksipass-name">Pemain 1</h2>
     <p class="pass-instruction">Oper perangkat ke pemain ini. Pastikan pemain lain tidak melihat layar sebelum menekan tombol di bawah.</p>
@@ -1152,6 +1159,7 @@
     <div class="aksi-header">
       <div>
         <span class="aksi-turn-badge">FASE JUAL · GILIRAN</span>
+        <span class="batch-tag round-badge" style="margin-left:8px;">RONDE 1 DARI 6</span>
         <div class="aksi-turn-name" id="jual-turn-name">Pemain 1</div>
         <div class="final-breakdown" id="jual-turn-coins" style="margin-top:6px;"></div>
         <div class="final-breakdown" id="jual-turn-holdings" style="margin-top:2px;"></div>
@@ -1173,6 +1181,7 @@
 <!-- ============ OPER PERANGKAT — sebelum tiap giliran Fase Jual ============ -->
 <section id="screen-jual-pass" class="screen">
   <div class="pass-card">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow" id="jualpass-eyebrow">FASE JUAL · GILIRAN 1 DARI 4</p>
     <h2 class="pass-name" id="jualpass-name">Pemain 1</h2>
     <p class="pass-instruction">Oper perangkat ke pemain ini. Pastikan pemain lain tidak melihat layar sebelum menekan tombol di bawah.</p>
@@ -1183,6 +1192,7 @@
 <!-- ============ FASE EKONOMI (otomatis, ringkasan) ============ -->
 <section id="screen-ekonomi" class="screen">
   <div class="aksi-wrap">
+    <span class="batch-tag round-badge">RONDE 1 DARI 6</span>
     <p class="pass-eyebrow">FASE EKONOMI</p>
     <h2 class="board-title" style="margin-bottom:16px;">Kartu Ekonomi ronde ini</h2>
     <div class="card-grid" id="ekonomi-cards-grid"></div>
@@ -1316,10 +1326,12 @@
     return shuffleArr(deck);
   }
 
+  var ECONOMY_PER_SECTOR = 6;
+
   function dealEkonomiPiles(board) {
     var deck = buildEkonomiDeck();
     board.forEach(function(s) {
-      if (!s.formula) s.ekonomi = deck.splice(0, 6);
+      if (!s.formula) s.ekonomi = deck.splice(0, ECONOMY_PER_SECTOR);
     });
   }
 
@@ -1391,6 +1403,8 @@
     state.pool = [];
     state.phase = 'ready-bidding';
     state.utangRemaining = 5;
+    state.roundNumber = 0;
+    state.totalRounds = ECONOMY_PER_SECTOR;
     goTo('screen-pass');
     renderPassScreen();
   });
@@ -1615,6 +1629,13 @@
     document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
     document.getElementById(id).classList.add('active');
     window.scrollTo(0, 0);
+    syncRoundBadges();
+  }
+
+  function syncRoundBadges() {
+    if (!state.totalRounds) return;
+    var text = 'RONDE ' + state.roundNumber + ' DARI ' + state.totalRounds;
+    document.querySelectorAll('.round-badge').forEach(function(el) { el.textContent = text; });
   }
 
   // ---- Kontrol fase di footer papan ----
@@ -1657,6 +1678,7 @@
   var btnGotoBidding = document.getElementById('btn-goto-bidding');
 
   function openAksiCards() {
+    state.roundNumber++;
     assignRandomOrder(state.players);
     renderBoard();
     var n = state.players.length * 2;
